@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/vsco/tail/util"
+	"github.com/grue/tail/util"
 
 	"gopkg.in/fsnotify.v1"
 	"gopkg.in/tomb.v1"
@@ -96,6 +96,16 @@ func (fw *InotifyFileWatcher) ChangeEvents(t *tomb.Tomb, pos int64) (*FileChange
 			}
 
 			switch {
+
+			//With an open fd, unlink(fd) - inotify returns IN_ATTRIB (==fsnotify.Chmod)
+			case evt.Op&fsnotify.Chmod == fsnotify.Chmod:
+				if _, err := os.Stat(fw.Filename); err != nil {
+					if !os.IsNotExist(err) {
+						return
+					}
+				}
+				fallthrough
+
 			case evt.Op&fsnotify.Remove == fsnotify.Remove:
 				fallthrough
 

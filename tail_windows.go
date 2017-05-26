@@ -3,8 +3,9 @@
 package tail
 
 import (
-	"github.com/vsco/tail/winfile"
 	"os"
+
+	"github.com/grue/tail/winfile"
 )
 
 func OpenFile(name string) (file *os.File, err error) {

@@ -15,9 +15,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vsco/tail/ratelimiter"
-	"github.com/vsco/tail/util"
-	"github.com/vsco/tail/watch"
+	"github.com/grue/tail/ratelimiter"
+	"github.com/grue/tail/util"
+	"github.com/grue/tail/watch"
+
 	"gopkg.in/tomb.v1"
 )
 
@@ -250,6 +251,11 @@ func (tail *Tail) tailFileSync() {
 
 	tail.openReader()
 
+	if err := tail.watchChanges(); err != nil {
+		tail.Killf("Error watching for changes on %s: %s", tail.Filename, err)
+		return
+	}
+
 	var offset int64
 	var err error
 
@@ -331,19 +337,25 @@ func (tail *Tail) tailFileSync() {
 	}
 }
 
+// watchChanges ensures the watcher is running.
+func (tail *Tail) watchChanges() error {
+	if tail.changes != nil {
+		return nil
+	}
+	pos, err := tail.file.Seek(0, os.SEEK_CUR)
+	if err != nil {
+		return err
+	}
+	tail.changes, err = tail.watcher.ChangeEvents(&tail.Tomb, pos)
+	return err
+}
+
 // waitForChanges waits until the file has been appended, deleted,
 // moved or truncated. When moved or deleted - the file will be
 // reopened if ReOpen is true. Truncated files are always reopened.
 func (tail *Tail) waitForChanges() error {
-	if tail.changes == nil {
-		pos, err := tail.file.Seek(0, os.SEEK_CUR)
-		if err != nil {
-			return err
-		}
-		tail.changes, err = tail.watcher.ChangeEvents(&tail.Tomb, pos)
-		if err != nil {
-			return err
-		}
+	if err := tail.watchChanges(); err != nil {
+		return err
 	}
 
 	select {
@@ -380,12 +392,14 @@ func (tail *Tail) waitForChanges() error {
 }
 
 func (tail *Tail) openReader() {
+	tail.lk.Lock()
 	if tail.MaxLineSize > 0 {
 		// add 2 to account for newline characters
 		tail.reader = bufio.NewReaderSize(tail.file, tail.MaxLineSize+2)
 	} else {
 		tail.reader = bufio.NewReader(tail.file)
 	}
+	tail.lk.Unlock()
 }
 
 func (tail *Tail) seekEnd() error {

@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/vsco/tail/util"
+	"github.com/grue/tail/util"
 	"gopkg.in/tomb.v1"
 )
 

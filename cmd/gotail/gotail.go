@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/vsco/tail"
+	"github.com/grue/tail"
 )
 
 func args2config() (tail.Config, int64) {

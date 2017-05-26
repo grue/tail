@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vsco/tail/ratelimiter"
-	"github.com/vsco/tail/watch"
+	"github.com/grue/tail/ratelimiter"
+	"github.com/grue/tail/watch"
 )
 
 func init() {
