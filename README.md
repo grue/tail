@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hpcloud/tail.svg)](https://travis-ci.org/hpcloud/tail)
+[![Build Status](https://travis-ci.org/grue/tail.svg)](https://travis-ci.org/grue/tail)
 [![Build status](https://ci.appveyor.com/api/projects/status/kohpsf3rvhjhrox6?svg=true)](https://ci.appveyor.com/project/HelionCloudFoundry/tail) 
 
 # Go package for tail-ing files
@@ -12,7 +12,7 @@ for line := range t.Lines {
 }
 ```
 
-See [API documentation](http://godoc.org/github.com/hpcloud/tail).
+See [API documentation](http://godoc.org/github.com/grue/tail).
 
 ## Log rotation
 
@@ -21,8 +21,8 @@ designed to work with log rotation tools.
 
 ## Installing
 
-    go get github.com/hpcloud/tail/...
+    go get github.com/grue/tail/...
 
 ## Windows support
 
-This package [needs assistance](https://github.com/hpcloud/tail/labels/Windows) for full Windows support.
+This package [needs assistance](https://github.com/grue/tail/labels/Windows) for full Windows support.
